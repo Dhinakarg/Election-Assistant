@@ -16,6 +16,14 @@ to their Google Calendar.
 When asked about polling locations, offer to show a map.
 Keep responses concise and use bullet points for steps.`;
 
+/**
+ * Calls the Google Gemini AI API with the user's message and current chat history.
+ * 
+ * @param {string} userMessage - The new text message from the user.
+ * @param {Array<{isUser: boolean, text: string}>} chatHistory - Array of previous messages for context.
+ * @returns {Promise<string>} The AI's response text.
+ * @throws {Error} Logs error and returns fallback string if API call fails.
+ */
 export const callGemini = async (userMessage, chatHistory) => {
   try {
     const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
