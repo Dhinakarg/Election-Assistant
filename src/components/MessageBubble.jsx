@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
+import DOMPurify from 'dompurify';
 
 const MessageBubble = ({ message, isUser, timestamp }) => {
   const [time] = useState(
@@ -8,7 +9,11 @@ const MessageBubble = ({ message, isUser, timestamp }) => {
 
   const renderContent = (text) => {
     if (!text) return null;
-    const parts = text.split('\n');
+    
+    // Sanitize the message first for maximum security
+    const sanitizedText = DOMPurify.sanitize(text);
+    
+    const parts = sanitizedText.split('\n');
     return parts.map((line, index) => {
       // Process bold text
       const processBold = (str) => {

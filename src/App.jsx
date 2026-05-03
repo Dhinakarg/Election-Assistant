@@ -132,6 +132,35 @@ function App() {
         </div>
       </main>
 
+      <footer className="bg-slate-50 border-t border-gray-200 py-10 mt-auto">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+            <div className="flex flex-col items-center md:items-start">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-2xl">🗳️</span>
+                <span className="text-xl font-bold text-slate-800">{t('appName')}</span>
+              </div>
+              <p className="text-sm text-slate-500 max-w-xs text-center md:text-left">
+                Empowering citizens through AI-driven election education. An experimental civic engagement platform.
+              </p>
+            </div>
+            
+            <div className="flex flex-wrap justify-center gap-6">
+              <a href="#" className="text-sm font-medium text-slate-500 hover:text-indigo-600 transition-colors">Privacy Policy</a>
+              <a href="#" className="text-sm font-medium text-slate-500 hover:text-indigo-600 transition-colors">Terms of Service</a>
+              <a href="#" className="text-sm font-medium text-slate-500 hover:text-indigo-600 transition-colors">Accessibility Statement</a>
+              <a href="https://eci.gov.in" target="_blank" rel="noopener noreferrer" className="text-sm font-medium text-slate-500 hover:text-indigo-600 transition-colors flex items-center gap-1">
+                ECI Official ↗
+              </a>
+            </div>
+            
+            <div className="text-xs text-slate-400 font-medium">
+              © 2026 Civic Election Assistant. Build with Google Gemini.
+            </div>
+          </div>
+        </div>
+      </footer>
+
       {/* Timeline Modal */}
       {isTimelineOpen && (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 transition-opacity" role="dialog" aria-modal="true" aria-label="Election Timeline Modal">

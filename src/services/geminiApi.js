@@ -1,4 +1,4 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from "@google/generative-ai";
 
 const SYSTEM_INSTRUCTION = `You are CivicGuide, a friendly and neutral election education 
 assistant. Help users understand:
@@ -17,6 +17,28 @@ When asked about polling locations, offer to show a map.
 Keep responses concise and use bullet points for steps.`;
 
 /**
+ * Safety settings for Gemini API to ensure non-partisan and safe civic discourse.
+ */
+const SAFETY_SETTINGS = [
+  {
+    category: HarmCategory.HARM_CATEGORY_HARASSMENT,
+    threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+  },
+  {
+    category: HarmCategory.HARM_CATEGORY_HATE_SPEECH,
+    threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+  },
+  {
+    category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
+    threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+  },
+  {
+    category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
+    threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE,
+  },
+];
+
+/**
  * Calls the Google Gemini AI API with the user's message and current chat history.
  * 
  * @param {string} userMessage - The new text message from the user.
@@ -33,14 +55,13 @@ export const callGemini = async (userMessage, chatHistory) => {
 
     const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({
-      model: "gemini-2.5-flash",
+      model: "gemini-2.0-flash",
       systemInstruction: SYSTEM_INSTRUCTION,
+      safetySettings: SAFETY_SETTINGS,
     });
 
     // Format chat history for Gemini API
-    // Ensure that chatHistory doesn't include the current userMessage
-    // and format it into the structure expected by the SDK.
-    let formattedHistory = chatHistory.map((msg) => ({
+    const formattedHistory = chatHistory.map((msg) => ({
       role: msg.isUser ? "user" : "model",
       parts: [{ text: msg.text }],
     }));
@@ -55,9 +76,7 @@ export const callGemini = async (userMessage, chatHistory) => {
     });
 
     const result = await chat.sendMessage(userMessage);
-    const responseText = result.response.text();
-    
-    return responseText;
+    return result.response.text();
   } catch (error) {
     console.error("Error calling Gemini API:", error);
     return "I'm having trouble connecting to my knowledge base right now. Please check your connection or try again in a moment.";

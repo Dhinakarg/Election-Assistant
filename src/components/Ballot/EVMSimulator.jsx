@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import PropTypes from 'prop-types';
 
 const EVMSimulator = ({ election }) => {
   const [selectedCandidate, setSelectedCandidate] = useState(null);
@@ -34,7 +35,7 @@ const EVMSimulator = ({ election }) => {
             <span className="w-16 text-center">Button</span>
           </div>
 
-          {election.candidates.map((candidate, index) => (
+          {election.candidates.map((candidate) => (
             <div 
               key={candidate.id} 
               className={`flex items-center p-3 border-b border-gray-200 transition-colors ${selectedCandidate?.id === candidate.id ? 'bg-teal-50' : 'hover:bg-gray-50'}`}
@@ -88,6 +89,20 @@ const EVMSimulator = ({ election }) => {
       )}
     </div>
   );
+};
+
+EVMSimulator.propTypes = {
+  election: PropTypes.shape({
+    title: PropTypes.string.isRequired,
+    constituency: PropTypes.string.isRequired,
+    candidates: PropTypes.arrayOf(PropTypes.shape({
+      id: PropTypes.number.isRequired,
+      serialNumber: PropTypes.number.isRequired,
+      name: PropTypes.string.isRequired,
+      party: PropTypes.string.isRequired,
+      symbol: PropTypes.string.isRequired,
+    })).isRequired,
+  }).isRequired,
 };
 
 export default EVMSimulator;

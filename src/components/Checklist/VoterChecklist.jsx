@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { CHECKLIST_ITEMS, getChecklistProgress } from '../../constants/checklistData';
 
 const VoterChecklist = () => {
@@ -62,7 +63,9 @@ const VoterChecklist = () => {
   const handleShare = () => {
     const text = "I'm ready to vote! ✅ All 7 voter readiness steps completed on CivicGuide 🗳️";
     if (navigator.share) {
-      navigator.share({ title: 'Voter Readiness', text }).catch(console.error);
+      navigator.share({ title: 'Voter Readiness', text }).catch(err => {
+        console.error("Error sharing readiness:", err);
+      });
     } else {
       navigator.clipboard.writeText(text);
       alert("Copied to clipboard!");
@@ -250,6 +253,10 @@ const VoterChecklist = () => {
       </div>
     </div>
   );
+};
+
+VoterChecklist.propTypes = {
+  // No props currently, but adding PropTypes.object for consistency
 };
 
 export default VoterChecklist;

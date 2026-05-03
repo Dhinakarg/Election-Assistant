@@ -1,28 +1,50 @@
 import { QUIZ_BANK } from '../constants/quizData';
 
+/**
+ * Shuffles an array using the Fisher-Yates algorithm for better randomness.
+ * @param {Array} array - The array to shuffle.
+ * @returns {Array} A new shuffled array.
+ */
+const shuffleArray = (array) => {
+  const newArr = [...array];
+  for (let i = newArr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
+  }
+  return newArr;
+};
+
+/**
+ * Builds a dynamic quiz based on topic and difficulty.
+ * 
+ * @param {string} topic - The key for the QUIZ_BANK.
+ * @param {string} difficulty - "easy", "medium", "hard", or "all".
+ * @param {number} count - Number of questions to return.
+ * @returns {Array} List of processed quiz questions.
+ */
 export const buildQuiz = (topic, difficulty, count) => {
-  const allQuestions = QUIZ_BANK[topic].questions;
+  const allQuestions = QUIZ_BANK[topic]?.questions || [];
   
   // Filter by difficulty if not "all"
   const filtered = difficulty === "all" 
     ? allQuestions
     : allQuestions.filter(q => q.difficulty === difficulty);
   
-  // Shuffle using Fisher-Yates algorithm (simplified for brevity)
-  const shuffled = [...filtered].sort(() => Math.random() - 0.5);
+  // Shuffle using Fisher-Yates for fair distribution
+  const shuffled = shuffleArray(filtered);
   
   // Take only the requested count
   const selected = shuffled.slice(0, count);
   
-  // Shuffle options within each question 
-  // but track new correct index
+  // Shuffle options within each question and track new correct index
   return selected.map(q => {
     const optionsWithIndex = q.options.map((opt, i) => ({
       text: opt,
       isCorrect: i === q.correctIndex
     }));
-    const shuffledOptions = optionsWithIndex
-      .sort(() => Math.random() - 0.5);
+    
+    const shuffledOptions = shuffleArray(optionsWithIndex);
+    
     return {
       ...q,
       options: shuffledOptions.map(o => o.text),
@@ -31,7 +53,14 @@ export const buildQuiz = (topic, difficulty, count) => {
   });
 };
 
-// Get feedback message based on score (no API needed)
+/**
+ * Generates an encouraging feedback message based on the score.
+ * 
+ * @param {number} score - Number of correct answers.
+ * @param {number} total - Total number of questions.
+ * @param {string} topic - Topic identifier.
+ * @returns {string} The feedback message.
+ */
 export const getFeedbackMessage = (score, total, topic) => {
   const pct = (score / total) * 100;
   const topicLabel = QUIZ_BANK[topic]?.label || "this topic";
@@ -43,7 +72,12 @@ export const getFeedbackMessage = (score, total, topic) => {
   return `Don't worry! Civic education takes time. Read through the explanations carefully and give it another shot.`;
 };
 
-// Get badge based on score percentage
+/**
+ * Returns a badge object (label, icon, color) based on performance percentage.
+ * 
+ * @param {number} pct - Percentage score (0-100).
+ * @returns {Object} The badge details.
+ */
 export const getBadge = (pct) => {
   if (pct >= 90) return { label: "Election Expert", icon: "🥇", color: "#FFD700" };
   if (pct >= 70) return { label: "Civic Champion", icon: "🥈", color: "#C0C0C0" };

@@ -64,7 +64,9 @@ const ObserverChallenge = ({ scenario, onExit, onNavigateToQuiz }) => {
   const handleShare = () => {
     const text = `I found all 5 MCC violations! Can you? 🕵️ Try CivicGuide`;
     if (navigator.share) {
-      navigator.share({ title: 'Election Observer', text }).catch(console.error);
+      navigator.share({ title: 'Election Observer', text }).catch(err => {
+        console.error("Error sharing:", err);
+      });
     } else {
       navigator.clipboard.writeText(text);
       alert("Copied to clipboard!");
@@ -236,7 +238,17 @@ const ObserverChallenge = ({ scenario, onExit, onNavigateToQuiz }) => {
 };
 
 ObserverChallenge.propTypes = {
-  scenario: PropTypes.object.isRequired,
+  scenario: PropTypes.shape({
+    title: PropTypes.string.isRequired,
+    icon: PropTypes.string.isRequired,
+    scenario: PropTypes.shape({
+      violations: PropTypes.arrayOf(PropTypes.shape({
+        id: PropTypes.string.isRequired,
+        violation: PropTypes.string.isRequired,
+        explanation: PropTypes.string.isRequired,
+      })).isRequired,
+    }).isRequired,
+  }).isRequired,
   onExit: PropTypes.func.isRequired,
   onNavigateToQuiz: PropTypes.func.isRequired,
 };

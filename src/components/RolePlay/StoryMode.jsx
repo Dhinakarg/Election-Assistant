@@ -246,7 +246,25 @@ const StoryMode = ({ scenario, onExit, onNavigateToQuiz }) => {
 };
 
 StoryMode.propTypes = {
-  scenario: PropTypes.object.isRequired,
+  scenario: PropTypes.shape({
+    title: PropTypes.string.isRequired,
+    character: PropTypes.shape({
+      name: PropTypes.string.isRequired,
+      avatar: PropTypes.string.isRequired,
+    }).isRequired,
+    stages: PropTypes.arrayOf(PropTypes.shape({
+      title: PropTypes.string.isRequired,
+      scene: PropTypes.string.isRequired,
+      image: PropTypes.string.isRequired,
+      choices: PropTypes.arrayOf(PropTypes.shape({
+        id: PropTypes.string.isRequired,
+        text: PropTypes.string.isRequired,
+        isCorrect: PropTypes.bool.isRequired,
+        feedback: PropTypes.string.isRequired,
+        consequence: PropTypes.string.isRequired,
+      })).isRequired,
+    })).isRequired,
+  }).isRequired,
   onExit: PropTypes.func.isRequired,
   onNavigateToQuiz: PropTypes.func.isRequired,
 };
