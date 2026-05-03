@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { getRandomFact } from '../../constants/factsData';
 import { buildQuiz } from '../../utils/quizUtils';
 
@@ -11,11 +12,15 @@ const PostVoteReflection = ({ context = "evm", onComplete }) => {
   const [score, setScore] = useState(0);
 
   useEffect(() => {
-    // Get a random fact based on context (e.g., "vvpat" or "evm")
-    setFact(getRandomFact(context));
-    
-    // Get 2 random reflection questions (shuffled automatically by buildQuiz)
-    setQuestions(buildQuiz("post_ballot", "all", 2));
+    // Wrap in timeout to avoid sync setState in effect lint error
+    const timer = setTimeout(() => {
+      // Get a random fact based on context (e.g., "vvpat" or "evm")
+      setFact(getRandomFact(context));
+      
+      // Get 2 random reflection questions (shuffled automatically by buildQuiz)
+      setQuestions(buildQuiz("post_ballot", "all", 2));
+    }, 0);
+    return () => clearTimeout(timer);
   }, [context]);
 
   const handleOptionSelect = (index) => {
@@ -121,6 +126,11 @@ const PostVoteReflection = ({ context = "evm", onComplete }) => {
       </div>
     </div>
   );
+};
+
+PostVoteReflection.propTypes = {
+  context: PropTypes.string,
+  onComplete: PropTypes.func
 };
 
 export default PostVoteReflection;

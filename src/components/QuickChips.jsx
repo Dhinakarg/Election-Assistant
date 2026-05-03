@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 
 const QuickChips = ({ onChipClick }) => {
   const chips = [
@@ -25,6 +26,10 @@ const QuickChips = ({ onChipClick }) => {
       ))}
     </div>
   );
+};
+
+QuickChips.propTypes = {
+  onChipClick: PropTypes.func.isRequired,
 };
 
 export default QuickChips;

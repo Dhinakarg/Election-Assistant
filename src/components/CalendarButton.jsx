@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import PropTypes from 'prop-types';
 import { addElectionEventToCalendar } from '../services/googleCalendar';
 
 const CalendarButton = ({ accessToken, eventDetails }) => {
@@ -51,6 +52,15 @@ const CalendarButton = ({ accessToken, eventDetails }) => {
       )}
     </div>
   );
+};
+
+CalendarButton.propTypes = {
+  accessToken: PropTypes.string,
+  eventDetails: PropTypes.shape({
+    title: PropTypes.string.isRequired,
+    date: PropTypes.string.isRequired,
+    description: PropTypes.string,
+  }).isRequired,
 };
 
 export default CalendarButton;

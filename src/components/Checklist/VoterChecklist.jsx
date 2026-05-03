@@ -1,23 +1,40 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { CHECKLIST_ITEMS, getChecklistProgress } from '../../constants/checklistData';
 
 const VoterChecklist = () => {
   const [completedIds, setCompletedIds] = useState(() => {
     const saved = localStorage.getItem('civicguide_checklist');
     if (saved) {
-      try { return JSON.parse(saved); } catch(e) { return []; }
+      try { return JSON.parse(saved); } catch(_e) { return []; }
     }
     return [];
   });
   
   const [animatingId, setAnimatingId] = useState(null);
   const [showConfetti, setShowConfetti] = useState(false);
+  const [confettiPieces, setConfettiPieces] = useState([]);
+
+  useEffect(() => {
+    const emojis = ['🎉', '🎊', '✨', '🗳️'];
+    const pieces = Array.from({ length: 50 }).map((_, i) => ({
+      id: i,
+      left: `${Math.random() * 100}vw`,
+      duration: `${Math.random() * 2 + 1}s`,
+      delay: `${Math.random() * 2}s`,
+      emoji: emojis[Math.floor(Math.random() * emojis.length)]
+    }));
+    setConfettiPieces(pieces);
+  }, []);
 
   useEffect(() => {
     localStorage.setItem('civicguide_checklist', JSON.stringify(completedIds));
     if (completedIds.length === CHECKLIST_ITEMS.length && completedIds.length > 0) {
-      setShowConfetti(true);
-      setTimeout(() => setShowConfetti(false), 5000);
+      const showTimer = setTimeout(() => setShowConfetti(true), 100);
+      const hideTimer = setTimeout(() => setShowConfetti(false), 5100);
+      return () => {
+        clearTimeout(showTimer);
+        clearTimeout(hideTimer);
+      };
     }
   }, [completedIds]);
 
@@ -62,18 +79,18 @@ const VoterChecklist = () => {
       {/* Confetti overlay */}
       {showConfetti && (
         <div className="fixed inset-0 pointer-events-none z-50 flex items-center justify-center overflow-hidden">
-          {Array.from({ length: 50 }).map((_, i) => (
+          {confettiPieces.map((piece) => (
             <div 
-              key={i} 
+              key={piece.id} 
               className="absolute text-4xl animate-fall"
               style={{
-                left: `${Math.random() * 100}vw`,
+                left: piece.left,
                 top: `-10vh`,
-                animationDuration: `${Math.random() * 2 + 1}s`,
-                animationDelay: `${Math.random() * 2}s`
+                animationDuration: piece.duration,
+                animationDelay: piece.delay
               }}
             >
-              {['🎉', '🎊', '✨', '🗳️'][Math.floor(Math.random() * 4)]}
+              {piece.emoji}
             </div>
           ))}
           <style>{`

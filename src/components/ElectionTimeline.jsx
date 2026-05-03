@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 
 const steps = [
   { id: 1, icon: "📢", title: "Election Announcement", desc: "Model Code of Conduct begins" },
@@ -13,9 +14,7 @@ const steps = [
   { id: 11, icon: "🏛️", title: "Government Formation", desc: "New government takes oath" },
 ];
 
-const ElectionTimeline = () => {
-  const currentStepId = 3; // Example: "Nomination Filing" is current
-
+const ElectionTimeline = ({ currentStepId = 3 }) => {
   return (
     <div className="bg-white rounded-xl shadow-sm p-6 w-full">
       <h3 className="text-xl font-bold text-gray-800 mb-6 border-b pb-3 flex items-center gap-2">
@@ -51,7 +50,7 @@ const ElectionTimeline = () => {
               
               <div className={`p-3 rounded-lg transition-colors ${isCurrent ? 'bg-indigo-50 border border-indigo-100 shadow-sm' : ''}`}>
                 <div className="flex items-center gap-3">
-                  <div className="w-8 flex justify-center items-center text-xl">
+                  <div className="w-8 flex justify-center items-center text-xl" aria-hidden="true">
                     {step.icon}
                   </div>
                   <div>
@@ -66,6 +65,10 @@ const ElectionTimeline = () => {
       </div>
     </div>
   );
+};
+
+ElectionTimeline.propTypes = {
+  currentStepId: PropTypes.number,
 };
 
 export default ElectionTimeline;

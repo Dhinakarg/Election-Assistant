@@ -32,10 +32,9 @@ export const addElectionEventToCalendar = async (accessToken, eventDetails) => {
     if (response.ok) {
       return { success: true };
     } else {
-      const errData = await response.json();
       return { success: false, error: "We couldn't add the event. Please check your calendar permissions and try again." };
     }
-  } catch (error) {
+  } catch {
     return { success: false, error: "An unexpected issue occurred while updating your calendar. Please try again later." };
   }
 };

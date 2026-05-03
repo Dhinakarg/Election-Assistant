@@ -27,14 +27,6 @@ const ChatWindow = () => {
     return [INITIAL_MESSAGE];
   });
 
-  useEffect(() => {
-    localStorage.setItem('civicGuideChatHistory', JSON.stringify(messages));
-  }, [messages]);
-
-  const handleReset = () => {
-    setMessages([INITIAL_MESSAGE]);
-    localStorage.removeItem('civicGuideChatHistory');
-  };
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const isSendingRef = useRef(false);
@@ -45,25 +37,18 @@ const ChatWindow = () => {
   };
 
   useEffect(() => {
+    localStorage.setItem('civicGuideChatHistory', JSON.stringify(messages));
     scrollToBottom();
   }, [messages, isLoading]);
 
-  useEffect(() => {
-    const handleStartChatTopic = (e) => {
-      const topic = e.detail;
-      if (topic) {
-        handleSend(topic);
-      }
-    };
-    
-    window.addEventListener('startChatTopic', handleStartChatTopic);
-    return () => window.removeEventListener('startChatTopic', handleStartChatTopic);
-  }, [messages]); // Note: handleSend depends on messages for context, so we might need it in deps, but since it's a window event it can get tricky. Let's rely on handleSend reading the latest state correctly.
+  const handleReset = () => {
+    setMessages([INITIAL_MESSAGE]);
+    localStorage.removeItem('civicGuideChatHistory');
+  };
 
   const handleSend = async (forcedText = null) => {
     if (isSendingRef.current) return;
     
-    // If the event triggered this, forcedText will be an event object. We check for string.
     const textToSend = typeof forcedText === 'string' ? forcedText : input;
     if (!textToSend.trim()) return;
     
@@ -71,7 +56,6 @@ const ChatWindow = () => {
     const userText = textToSend.trim();
     const newUserMessage = { id: Date.now(), text: userText, isUser: true };
     
-    // Add user message to UI immediately
     setMessages(prev => [...prev, newUserMessage]);
     setInput('');
     setIsLoading(true);
@@ -86,16 +70,26 @@ const ChatWindow = () => {
       };
       const instruction = langInstruction[language] ? `${langInstruction[language]}\n` : "";
       
-      // Call Gemini API with instruction prepended
       const responseText = await callGemini(instruction + userText, messages);
       
-      // Add model response to UI
       setMessages(prev => [...prev, { id: Date.now() + 1, text: responseText, isUser: false }]);
     } finally {
       setIsLoading(false);
       isSendingRef.current = false;
     }
   };
+
+  useEffect(() => {
+    const handleStartChatTopic = (e) => {
+      const topic = e.detail;
+      if (topic) {
+        handleSend(topic);
+      }
+    };
+    
+    window.addEventListener('startChatTopic', handleStartChatTopic);
+    return () => window.removeEventListener('startChatTopic', handleStartChatTopic);
+  }, [language]); // Depend on language to ensure latest instruction is used if needed, but handleSend is stable.
 
   const handleChipClick = (text) => {
     handleSend(text);

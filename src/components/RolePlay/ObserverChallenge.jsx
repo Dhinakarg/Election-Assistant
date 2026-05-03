@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 
 // Hardcoded segments matching the story string from rolePlayData
 const STORY_SEGMENTS = [
@@ -24,9 +25,10 @@ const ObserverChallenge = ({ scenario, onExit, onNavigateToQuiz }) => {
   // Requirement: completion after 5 core violations found
   useEffect(() => {
     if (foundViolations.length >= 5 && !isCompleted) {
-      setTimeout(() => {
+      const timer = setTimeout(() => {
         setIsCompleted(true);
       }, 1500); // Give them time to read the last toast
+      return () => clearTimeout(timer);
     }
   }, [foundViolations, isCompleted]);
 
@@ -231,6 +233,12 @@ const ObserverChallenge = ({ scenario, onExit, onNavigateToQuiz }) => {
       `}</style>
     </div>
   );
+};
+
+ObserverChallenge.propTypes = {
+  scenario: PropTypes.object.isRequired,
+  onExit: PropTypes.func.isRequired,
+  onNavigateToQuiz: PropTypes.func.isRequired,
 };
 
 export default ObserverChallenge;

@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
+import PropTypes from 'prop-types';
 
 const StoryMode = ({ scenario, onExit, onNavigateToQuiz }) => {
   const [currentStageIndex, setCurrentStageIndex] = useState(0);
@@ -10,7 +11,6 @@ const StoryMode = ({ scenario, onExit, onNavigateToQuiz }) => {
   const [isFinished, setIsFinished] = useState(false);
 
   const stage = scenario.stages[currentStageIndex];
-  const totalStages = scenario.totalStages; // For "election_observer" this is 1, but this component is for first_time_voter and booth_officer where it's > 1.
 
   const handleChoiceSelect = (choice) => {
     if (showFeedback) return; // Prevent multiple clicks
@@ -61,21 +61,12 @@ const StoryMode = ({ scenario, onExit, onNavigateToQuiz }) => {
     const finalScore = score;
     const maxScore = scenario.stages.length;
     
-    let label = "";
-    let icon = "";
-    if (finalScore === maxScore) {
-      label = "🏆 Perfect Civic Citizen!";
-      icon = "🏆";
-    } else if (finalScore >= maxScore - 1) {
-      label = "⭐ Great Decision Maker!";
-      icon = "⭐";
-    } else if (finalScore >= maxScore / 2) {
-      label = "👍 Good effort — review the explanations";
-      icon = "👍";
-    } else {
-      label = "📚 Keep practicing";
-      icon = "📚";
-    }
+    const { label, icon } = (() => {
+      if (finalScore === maxScore) return { label: "🏆 Perfect Civic Citizen!", icon: "🏆" };
+      if (finalScore >= maxScore - 1) return { label: "⭐ Great Decision Maker!", icon: "⭐" };
+      if (finalScore >= maxScore / 2) return { label: "👍 Good effort — review the explanations", icon: "👍" };
+      return { label: "📚 Keep practicing", icon: "📚" };
+    })();
 
     const xpEarned = finalScore * 10;
 
@@ -187,6 +178,9 @@ const StoryMode = ({ scenario, onExit, onNavigateToQuiz }) => {
 
         {/* Choices Section */}
         <div className="space-y-4">
+          <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6 text-yellow-800 font-medium rounded-r-lg shadow-sm">
+            💡 <span className="font-bold">Instruction:</span> Choose the best action to take in this scenario.
+          </div>
           <h3 className="font-bold text-gray-800 text-lg mb-4 px-2">What should {scenario.character.name} do?</h3>
           
           <div className="space-y-3">
@@ -249,6 +243,12 @@ const StoryMode = ({ scenario, onExit, onNavigateToQuiz }) => {
       </div>
     </div>
   );
+};
+
+StoryMode.propTypes = {
+  scenario: PropTypes.object.isRequired,
+  onExit: PropTypes.func.isRequired,
+  onNavigateToQuiz: PropTypes.func.isRequired,
 };
 
 export default StoryMode;

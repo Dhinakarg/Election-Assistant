@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { ROLE_PLAY_SCENARIOS } from '../../constants/rolePlayData';
 import StoryMode from './StoryMode';
 import ObserverChallenge from './ObserverChallenge';

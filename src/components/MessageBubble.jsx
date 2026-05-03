@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import PropTypes from 'prop-types';
 
 const MessageBubble = ({ message, isUser, timestamp }) => {
   const [time] = useState(
@@ -85,6 +86,12 @@ const MessageBubble = ({ message, isUser, timestamp }) => {
       </div>
     </div>
   );
+};
+
+MessageBubble.propTypes = {
+  message: PropTypes.string.isRequired,
+  isUser: PropTypes.bool.isRequired,
+  timestamp: PropTypes.string,
 };
 
 export default MessageBubble;

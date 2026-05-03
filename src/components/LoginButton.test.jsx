@@ -1,10 +1,10 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import LoginButton from './LoginButton';
+import React from 'react';
 
 // Mock the Firebase Auth module since we don't want to make real API calls in tests
 vi.mock('../services/firebaseAuth', () => ({
-  auth: {},
   signInWithGoogle: vi.fn(),
   logOut: vi.fn(),
 }));
@@ -13,9 +13,16 @@ vi.mock('firebase/auth', () => ({
   GoogleAuthProvider: {
     credentialFromResult: vi.fn(),
   },
-  onAuthStateChanged: vi.fn((auth, callback) => {
+  onAuthStateChanged: vi.fn((_auth, _callback) => {
     // Return a dummy unsubscribe function
     return () => {};
+  }),
+}));
+
+vi.mock('../context/AuthContext', () => ({
+  useAuth: () => ({
+    user: null,
+    setAccessToken: vi.fn(),
   }),
 }));
 
